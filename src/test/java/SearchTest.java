@@ -2,6 +2,8 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.tinylog.Logger;
 import rts.helpers.Util;
@@ -15,17 +17,19 @@ import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.$;
 import static java.math.BigDecimal.ROUND_DOWN;
 
+
 public class SearchTest extends Util {
 
     SearchPage searchPage = new SearchPage();
-    Util util = new Util();
+
+    // Util util = new Util();
     int wait = 100000;
     int waitInterval = 50;
 
     @Test
 
-
     public void countSums() throws IOException {
+
         Selenide.open(SearchPage.url);
         Logger.info("Открыт браузер");
 
@@ -38,30 +42,23 @@ public class SearchTest extends Util {
 
         double usd = 0.0;
         double eur = 0.0;
-        try {
-            File fileData = new File("src/test/java/rts/files/Data.ini");
-            Logger.info("Файл Data.ini успешно открыт.");
 
-            //создаем объект Properties и загружаем в него данные из файла.
-            Properties properties = new Properties();
-            properties.load(new FileReader(fileData));
+        //создаем объект Properties и загружаем в него данные из файла.
+        Properties properties = new Properties();
+        properties.load(new FileReader(fileData));
 
-            //получаем значения свойств из объекта Properties
-            String BEGIN_OF_NOTICE = properties.getProperty("BEGIN_OF_NOTICE"); //начальная дата публикации извещения
-            String END_OF_NOTICE = properties.getProperty("END_OF_NOTICE"); //конечная дата конца публикации извещения
-            String USD = properties.getProperty("USD"); //курс доллара к рублю
-            String EUR = properties.getProperty("EUR"); //курс евро к рублю
-            usd = Double.parseDouble(USD);
-            eur = Double.parseDouble(EUR);
+        //получаем значения свойств из объекта Properties
+        String BEGIN_OF_NOTICE = properties.getProperty("BEGIN_OF_NOTICE"); //начальная дата публикации извещения
+        String END_OF_NOTICE = properties.getProperty("END_OF_NOTICE"); //конечная дата конца публикации извещения
+        String USD = properties.getProperty("USD"); //курс доллара к рублю
+        String EUR = properties.getProperty("EUR"); //курс евро к рублю
+        usd = Double.parseDouble(USD);
+        eur = Double.parseDouble(EUR);
 
-            //устанавливаем диапазон дат публикаций извезений
-            searchPage.dateFrom.waitUntil(Condition.visible, wait, waitInterval).setValue(BEGIN_OF_NOTICE);
-            searchPage.dateTo.waitUntil(Condition.visible, wait, waitInterval).setValue(END_OF_NOTICE);
-            Logger.info("Даты начала и конца извещения извлечены из файла Data.ini");
-        } catch (IOException e) {
-            Logger.error("Файл Data.ini не найден");
-            e.printStackTrace();
-        }
+        //устанавливаем диапазон дат публикаций извезений
+        searchPage.dateFrom.waitUntil(Condition.visible, wait, waitInterval).setValue(BEGIN_OF_NOTICE);
+        searchPage.dateTo.waitUntil(Condition.visible, wait, waitInterval).setValue(END_OF_NOTICE);
+        Logger.info("Даты начала и конца извещения извлечены из файла Data.ini");
 
         searchPage.buttonSearch.waitUntil(Condition.visible, wait, waitInterval).click();//нажатие кнопки Поиск
         Logger.info("Нажата кнопка 'Поиск'");

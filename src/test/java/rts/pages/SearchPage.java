@@ -1,8 +1,6 @@
 package rts.pages;
 
 import com.codeborne.selenide.SelenideElement;
-import org.junit.Before;
-import org.tinylog.Logger;
 
 import static com.codeborne.selenide.Selenide.$;
 
