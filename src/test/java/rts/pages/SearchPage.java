@@ -1,11 +1,15 @@
 package rts.pages;
 
 import com.codeborne.selenide.SelenideElement;
+import org.junit.Before;
+import org.tinylog.Logger;
 
 import static com.codeborne.selenide.Selenide.$;
 
 
 public class SearchPage {
+    //адрес страницы тестового задания
+    public static String url = "https://223.rts-tender.ru/supplier/auction/trade/search.aspx";
     //чек-бокс 223-ФЗ
     public SelenideElement checkBox223FL = $("#BaseMainContent_MainContent_chkPurchaseType_0");
     //чек-бокс Коммерческая Закупка
@@ -28,7 +32,14 @@ public class SearchPage {
     public String price = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_StartPrice\"]";
     //всплывающее окно Загрузка
     public String loader = "#load_BaseMainContent_MainContent_jqgTrade";
+
+
 }
+
+
+
+
+
 
 
 
