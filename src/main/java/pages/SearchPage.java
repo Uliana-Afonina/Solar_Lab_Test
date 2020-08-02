@@ -4,8 +4,14 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import org.tinylog.Logger;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Properties;
+
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.$;
+import static helpers.Util.fileData;
 
 public class SearchPage {
 
@@ -86,5 +92,15 @@ public class SearchPage {
         $(ldr).waitUntil(not(Condition.visible), wait, waitInterval);
         Logger.info("Ожидаю, пока прогрузится таблица");
     }
+
+    //считываем данные о дате публикации извещений и данные о курсах валют
+    public String readData(String key) throws IOException {
+        //создаем объект Properties и загружаем в него данные из файла.
+        //получаем значения свойств из объекта Properties
+        Properties properties = new Properties();
+        properties.load(new FileReader(fileData));
+        return properties.getProperty(key);
+    }
+
 
 }

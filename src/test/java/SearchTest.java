@@ -9,7 +9,6 @@ import pages.SearchPage;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.util.Properties;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.$;
@@ -32,19 +31,14 @@ public class SearchTest extends Util {
         searchPage.setCheckBox(searchPage.checkBoxCP);
         //установка начальной цены
         searchPage.setStartPrice(0);
-
-        //создаем объект Properties и загружаем в него данные из файла.
-        Properties properties = new Properties();
-        properties.load(new FileReader(fileData));
-        //получаем значения свойств из объекта Properties
         //начальная дата публикации извещения
-        String BEGIN_OF_NOTICE = properties.getProperty("BEGIN_OF_NOTICE");
+        String BEGIN_OF_NOTICE = searchPage.readData("BEGIN_OF_NOTICE");
         //конечная дата конца публикации извещения
-        String END_OF_NOTICE = properties.getProperty("END_OF_NOTICE");
+        String END_OF_NOTICE = searchPage.readData("END_OF_NOTICE");
         //курс доллара к рублю
-        String USD = properties.getProperty("USD");
+        String USD = searchPage.readData("USD");
         //курс евро к рублю
-        String EUR = properties.getProperty("EUR");
+        String EUR = searchPage.readData("EUR");
         //преобразовывем курсы валют из строки в вещественное число
         double usd = Double.parseDouble(USD);
         double eur = Double.parseDouble(EUR);
