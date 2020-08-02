@@ -1,16 +1,18 @@
-package rts.helpers;
+package helpers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.tinylog.Logger;
 
 import java.io.File;
-
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class Util {
     //инициализация переменной для хранения значения текущей стоимости
     public static double priceOfLot = 0.00;
-
-    public static File fileData = new File("src/test/java/rts/files/Data.ini");
+    //создаем объекты для файла с данными и для файла с результатами теста
+    public static File fileData = new File("src/main/resources/files/Data.ini");
+    public static File fileResult = new File("src/main/resources/files/SumCountLots.txt");
 
 
     //Проверка наличия файла Data.ini перед запуском теста
@@ -21,6 +23,7 @@ public class Util {
             System.exit(0);
         }
     }
+
     //********Метод конвертации валюты*********
     //Этот метод вызывается в методе convertStringToDouble().
     //В prOfLt передать priceOfLot
@@ -73,8 +76,18 @@ public class Util {
         return priceOfLot;
     }
 
+    public static void writeResults(String text) throws IOException {
 
+        if (!fileResult.exists()) {
+            fileResult.createNewFile();
+            Logger.info("Файл успешно создан");
+        }
+        try (PrintWriter out = new PrintWriter(fileResult)) {
+            //Записываем текст в файл
+            out.print(text);
+        } catch (IOException e) {
+            Logger.error("Ошибка при записи результатов в файл");
+            throw new RuntimeException(e);
+        }
+    }
 }
-
-
-
