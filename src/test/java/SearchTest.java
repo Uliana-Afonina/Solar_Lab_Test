@@ -23,7 +23,7 @@ public class SearchTest extends Util {
 
     public void countSums() throws IOException {
 
-        Selenide.open(SearchPage.url);
+        Selenide.open(SearchPage.URL);
         Logger.info("Открыт браузер");
         //чек-бокс 223-ФЗ
         searchPage.setCheckBox(searchPage.checkBox223FL);
@@ -51,7 +51,7 @@ public class SearchTest extends Util {
         searchPage.clickSearchButton();
 
         //ждем, пока прогрузится таблица (должно исчезнуть окно Загрузка...)
-        searchPage.waitLoading(searchPage.loader);
+        searchPage.waitLoading(searchPage.LOADER);
 
         double sum = 0.0;
         int count = 0;
@@ -59,35 +59,25 @@ public class SearchTest extends Util {
         //до тех пор, пока кнопка перехода на следующую страницу таблицы кликабельная,
         //считаем количество и сумму лотов
         do {
-            if ($(searchPage.loader).isDisplayed()) {
-                searchPage.waitLoading(searchPage.loader);
+            if ($(searchPage.LOADER).isDisplayed()) {
+                searchPage.waitLoading(searchPage.LOADER);
             }
             //поиск по коллекции. Выбираем те строки, где присутствует номер ЕИС
-            ElementsCollection trades = Selenide.$$(searchPage.oosNumber).filterBy(not(Condition.empty));
-
+            ElementsCollection trades = Selenide.$$(searchPage.OOS_NUMBER).filterBy(not(Condition.empty));
             for (SelenideElement trade : trades) {
-                //Выбираем те значения, статус которых не отменен
-                if (!trade.parent().find(searchPage.state).text().equals("Отменена")) {
-
-                    //переводим строку с ценой в числовой формат, откидываем нечисленные символы
-                    //проверяем, в какой валюте указана цена. Переводим в рубли, если есть необходимость
-                    //курс евро и доллара подтягивается из файла Data.ini
-
-                    String textCurrency = trade.parent().find(searchPage.price).text();
-                    //преобразовываем цену из текстового формата в числовой
-                    currentSum = Util.convertStringToDouble(textCurrency, usd, eur, trade.text());
-
-                    //переводим числа из экспоненциального формата в "читабельный"
-                    BigDecimal bd = new BigDecimal(currentSum).setScale(2, ROUND_DOWN);
-                    sum += currentSum;
-                    count++;
-                    Logger.info(count + ". Цена #" + trade.text() + " = " + bd + " руб.");
-
-                }
+                //ищем в строке с номером ЕИС элемент, соответствующий цене лота
+                String txtCur = searchPage.findPrice(trade);
+                //преобразовываем цену из текстового формата в числовой
+                currentSum = Util.convertCurrency(txtCur, usd, eur, trade.text());
+                //переводим числа из экспоненциального формата в "читабельный"
+                BigDecimal bd = new BigDecimal(currentSum).setScale(2, ROUND_DOWN);
+                sum += currentSum;
+                count++;
+                Logger.info(count + ". Цена #" + trade.text() + " = " + bd + " руб.");
             }
             //переходим на следующую страницу таблицы
-            searchPage.clickNextPage(searchPage.nextPage);
-        } while (!$(searchPage.nextPage).has(Condition.cssClass("ui-state-disabled")));
+            searchPage.clickNextPage(searchPage.NEXT_PAGE);
+        } while (!$(searchPage.NEXT_PAGE).has(Condition.cssClass("ui-state-disabled")));
         Logger.info("Достигли конца таблицы");
         //переводим общую сумму закупок из экспоненциальной в "читабельную" форму
         BigDecimal allSum = new BigDecimal(sum).setScale(2, ROUND_DOWN);

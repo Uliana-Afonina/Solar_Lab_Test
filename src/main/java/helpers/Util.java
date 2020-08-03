@@ -24,52 +24,42 @@ public class Util {
         }
     }
 
-    //********Метод конвертации валюты*********
-    //Этот метод вызывается в методе convertStringToDouble().
-    //В prOfLt передать priceOfLot
-    //В rate передать eur либо usd (выбор делается в методе convertStringToDouble()
+    //Метод для пребразования цены из строки в вещественное число
+    //Этот метод вызывается в методе convertCurrency().
+    //в priceText передать String textCurrency = trade.parent().find(searchPage.price).text();
+    //В rate передать eur либо usd (выбор делается в методе convertCurrency()
+    public static Double convertStringToToDouble(String priceText, String rate) {
 
-    private static Double convertCurrency(double prOfLt, double rate) {
+        priceOfLot = Double.parseDouble(priceText
+                .replace(" ", "")
+                .replace(",", ".")
+                .replace(rate, ""));
 
-        prOfLt *= rate;
-        return prOfLt;
-
+        return priceOfLot;
     }
-
-    //********Метод для пробразования строки-цены в число-цену*********
 
     //в priceText передать String textCurrency = trade.parent().find(searchPage.price).text();
     //в tradeText передать trade.text() для указания номера в ЕИС лота, цена которого не в рублях
 
-    public static Double convertStringToDouble(String priceText, double usd, double eur, String tradeText) {
+    public static double convertCurrency(String priceText, double usd, double eur, String tradeText) {
 // ищем последнее вхождение пробела в строку
         String space = " ";
         int i = priceText.lastIndexOf(space);
 // со следующего от пробела знака и до конца строки ищем совпадения EUR, USD, руб.
-// преобразуем строку в вещественное число
+// вызываем метод convertStringToToDouble() для преобразования строки в вещественное число
+// конвертируем валюту, если есть необходимость
         switch (priceText.substring(i + 1)) {
             case "EUR":
-                priceOfLot = Double.parseDouble(priceText
-                        .replace(" ", "")
-                        .replace(",", ".")
-                        .replace("EUR", ""));
-                priceOfLot = convertCurrency(priceOfLot, eur);
+                priceOfLot = convertStringToToDouble(priceText, "EUR") * eur;
                 Logger.info("Цена #" + tradeText + " была указана в EUR. Пересчитана в руб.");
-                break;
+                return priceOfLot;
             case "USD":
-                priceOfLot = Double.parseDouble(priceText
-                        .replace(" ", "")
-                        .replace(",", ".")
-                        .replace("USD", ""));
-                priceOfLot = convertCurrency(priceOfLot, usd);
+                priceOfLot = convertStringToToDouble(priceText, "USD") * usd;
                 Logger.info("Цена #" + tradeText + " была указана в USD. Пересчитана в руб.");
-                break;
+                return priceOfLot;
             case "руб.":
-                priceOfLot = Double.parseDouble(priceText
-                        .replace(" ", "")
-                        .replace(",", ".")
-                        .replace("руб.", ""));
-                break;
+                priceOfLot = convertStringToToDouble(priceText, "руб.");
+                return priceOfLot;
 
         }
 //возвращаем вещественное значение цены лота
@@ -90,4 +80,5 @@ public class Util {
             throw new RuntimeException(e);
         }
     }
+
 }

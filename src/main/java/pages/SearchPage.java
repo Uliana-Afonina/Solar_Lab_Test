@@ -4,7 +4,6 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import org.tinylog.Logger;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -18,7 +17,7 @@ public class SearchPage {
     int wait = 100000;
     int waitInterval = 50;
     //адрес страницы тестового задания
-    public static String url = "https://223.rts-tender.ru/supplier/auction/trade/search.aspx";
+    public static final String URL = "https://223.rts-tender.ru/supplier/auction/trade/search.aspx";
     //чек-бокс 223-ФЗ
     public SelenideElement checkBox223FL = $("#BaseMainContent_MainContent_chkPurchaseType_0");
     //чек-бокс Коммерческая Закупка
@@ -32,15 +31,15 @@ public class SearchPage {
     //поле ввода даты Конца извещения
     public SelenideElement dateTo = $("#BaseMainContent_MainContent_txtPublicationDate_txtDateTo");
     //кнопка, перелистывающая таблицу
-    public String nextPage = "#next_t_BaseMainContent_MainContent_jqgTrade_toppager";
+    public final String NEXT_PAGE = "#next_t_BaseMainContent_MainContent_jqgTrade_toppager";
     //ячейка с таблицы с номером ЕИС
-    public String oosNumber = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_OosNumber\"]";
+    public final String OOS_NUMBER = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_OosNumber\"]";
     //ячейка таблицы со статусом заявки
-    public String state = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_LotStateString\"]";
+    public final String STATE = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_LotStateString\"]";
     //текстовое поле "Начальная цена"
-    public String price = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_StartPrice\"]";
+    public final String PRICE = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_StartPrice\"]";
     //всплывающее окно Загрузка
-    public String loader = "#load_BaseMainContent_MainContent_jqgTrade";
+    public final String LOADER = "#load_BaseMainContent_MainContent_jqgTrade";
 
     //установка даты начала публикации извещение
     public void setDataBegin(String data) {
@@ -83,13 +82,13 @@ public class SearchPage {
     }
 
     //переключаем на следующую страницу таблицы
-    public void clickNextPage(String nxtPg) {
-        $(nxtPg).click();
+    public void clickNextPage(String NEXT_PAGE) {
+        $(NEXT_PAGE).click();
     }
 
     //ожидание, пока прогрузится страница таблицы
-    public void waitLoading(String ldr) {
-        $(ldr).waitUntil(not(Condition.visible), wait, waitInterval);
+    public void waitLoading(String LOADER) {
+        $(LOADER).waitUntil(not(Condition.visible), wait, waitInterval);
         Logger.info("Ожидаю, пока прогрузится таблица");
     }
 
@@ -102,5 +101,16 @@ public class SearchPage {
         return properties.getProperty(key);
     }
 
+    //инициализируем строковую переменную для хранения цены лота
+    public String textCurrency;
+
+    //ищем элемент, отвечающий за цену лота
+    public String findPrice(SelenideElement trade) {
+        //Выбираем те значения, статус которых не отменен
+        if (!trade.parent().find(STATE).text().equals("Отменена")) {
+            textCurrency = trade.parent().find(PRICE).text();
+        }
+        return textCurrency;
+    }
 
 }
