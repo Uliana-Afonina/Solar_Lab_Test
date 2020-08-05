@@ -1,7 +1,9 @@
 package pages;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.By;
 import org.tinylog.Logger;
 
 import java.io.FileReader;
@@ -10,6 +12,7 @@ import java.util.Properties;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 import static helpers.Util.fileData;
 
 public class SearchPage {
@@ -33,52 +36,42 @@ public class SearchPage {
     //кнопка, перелистывающая таблицу
     public final String NEXT_PAGE = "#next_t_BaseMainContent_MainContent_jqgTrade_toppager";
     //ячейка с таблицы с номером ЕИС
-    public final String OOS_NUMBER = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_OosNumber\"]";
+    public final String OOS_NUMBER = ".//*[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']";           //"[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_OosNumber\"]";
     //ячейка таблицы со статусом заявки
-    public final String STATE = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_LotStateString\"]";
+    public final String STATE = ".//*[@aria-describedby='BaseMainContent_MainContent_jqgTrade_LotStateString']";
     //текстовое поле "Начальная цена"
-    public final String PRICE = "[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_StartPrice\"]";
+    public final String PRICE = ".//*[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']";
     //всплывающее окно Загрузка
     public final String LOADER = "#load_BaseMainContent_MainContent_jqgTrade";
 
     //установка даты начала публикации извещение
     public void setDataBegin(String data) {
-
         dateFrom.waitUntil(Condition.visible, wait, waitInterval).setValue(data);
         Logger.info("Дата начала публикации извещения извлечена из файла Data.ini");
-
     }
 
     //установка даты конца публикации извещение
     public void setDataEnd(String data) {
-
         dateTo.waitUntil(Condition.visible, wait, waitInterval).setValue(data);
         Logger.info("Дата конца публикации извещения извлечена из файла Data.ini");
-
     }
 
     //нажатие кнопки Поиск
     public void clickSearchButton() {
-
         buttonSearch.waitUntil(Condition.visible, wait, waitInterval).click();
         Logger.info("Нажата кнопка 'Поиск'");
-
     }
 
     //выбор чек-боксов
     public void setCheckBox(SelenideElement checkBox) {
-
         checkBox.waitUntil(Condition.visible, wait, waitInterval).setSelected(true);
         Logger.info("Чек-бокс выбран");
-
     }
 
     //установка начальной цены
     public void setStartPrice(double strtPrc) {
-        String sP = Double.toString(strtPrc);
-        startPrice.waitUntil(Condition.visible, wait, waitInterval).setValue(sP);
+        startPrice.waitUntil(Condition.visible, wait, waitInterval).setValue(Double.toString(strtPrc));
         Logger.info("Установлена начальная цена");
-
     }
 
     //переключаем на следующую страницу таблицы
@@ -101,16 +94,10 @@ public class SearchPage {
         return properties.getProperty(key);
     }
 
-    //инициализируем строковую переменную для хранения цены лота
-    public String textCurrency;
-
-    //ищем элемент, отвечающий за цену лота
-    public String findPrice(SelenideElement trade) {
-        //Выбираем те значения, статус которых не отменен
-        if (!trade.parent().find(STATE).text().equals("Отменена")) {
-            textCurrency = trade.parent().find(PRICE).text();
-        }
-        return textCurrency;
+    //возвращаем цену лота
+    public String getPrice(SelenideElement trade) {
+        //инициализируем строковую переменную для хранения цены лота
+        return trade.parent().$x(PRICE).getText();
     }
 
 }

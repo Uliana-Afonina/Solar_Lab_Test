@@ -4,6 +4,7 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import helpers.Util;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
 import org.tinylog.Logger;
 import pages.SearchPage;
 
@@ -12,12 +13,14 @@ import java.math.BigDecimal;
 
 import static com.codeborne.selenide.Condition.not;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 import static java.math.BigDecimal.ROUND_DOWN;
 
 
 public class SearchTest extends Util {
 
     SearchPage searchPage = new SearchPage();
+
 
     @Test
 
@@ -63,17 +66,20 @@ public class SearchTest extends Util {
                 searchPage.waitLoading(searchPage.LOADER);
             }
             //поиск по коллекции. Выбираем те строки, где присутствует номер ЕИС
-            ElementsCollection trades = Selenide.$$(searchPage.OOS_NUMBER).filterBy(not(Condition.empty));
+            ElementsCollection trades = Selenide.$$x(searchPage.OOS_NUMBER).filterBy(not(Condition.empty));
             for (SelenideElement trade : trades) {
-                //ищем в строке с номером ЕИС элемент, соответствующий цене лота
-                String txtCur = searchPage.findPrice(trade);
-                //преобразовываем цену из текстового формата в числовой
-                currentSum = Util.convertCurrency(txtCur, usd, eur, trade.text());
-                //переводим числа из экспоненциального формата в "читабельный"
-                BigDecimal bd = new BigDecimal(currentSum).setScale(2, ROUND_DOWN);
-                sum += currentSum;
-                count++;
-                Logger.info(count + ". Цена #" + trade.text() + " = " + bd + " руб.");
+                if (!trade.parent().$x(searchPage.STATE).text().equals("Отменена")) {
+                    //if (!trade.parent().find(searchPage.STATE).text().equals("Отменена")) {
+                    //ищем в строке с номером ЕИС элемент, соответствующий цене лота
+                    String txtCur = searchPage.getPrice(trade);
+                    //преобразовываем цену из текстового формата в числовой
+                    currentSum = Util.convertCurrency(txtCur, usd, eur, trade.text());
+                    //переводим числа из экспоненциального формата в "читабельный"
+                    BigDecimal bd = new BigDecimal(currentSum).setScale(2, ROUND_DOWN);
+                    sum += currentSum;
+                    count++;
+                    Logger.info(count + ". Цена #" + trade.text() + " = " + bd + " руб.");
+                }
             }
             //переходим на следующую страницу таблицы
             searchPage.clickNextPage(searchPage.NEXT_PAGE);
