@@ -80,7 +80,7 @@ public class SearchTest extends Util {
             }
             //переходим на следующую страницу таблицы
             searchPage.clickNextPage();
-        } while (!$(searchPage.NEXT_PAGE).has(Condition.cssClass("ui-state-disabled")));
+        } while (!searchPage.NEXT_PAGE.has(Condition.cssClass("ui-state-disabled")));
         Logger.info("Достигли конца таблицы");
         //переводим общую сумму закупок из экспоненциальной в "читабельную" форму
         BigDecimal allSum = new BigDecimal(sum).setScale(2, ROUND_DOWN);
