@@ -27,8 +27,7 @@ public class Util {
     //В rate передать eur либо usd (выбор делается в методе convertCurrency()
 
     public static Double convertStringToToDouble(String priceText, String rate) {
-        String space = " ";
-        return Double.parseDouble(priceText.substring(0, priceText.lastIndexOf(space))
+        return Double.parseDouble(priceText.substring(0, priceText.lastIndexOf(" "))
                 .replace(" ", "")
                 .replace(",", ".")
                 .replace(rate, ""));
@@ -39,12 +38,10 @@ public class Util {
     public static double convertCurrency(String priceText, double usd, double eur, String tradeText) {
         double priceOfLot = 0.00;
 // ищем последнее вхождение пробела в строку
-        String space = " ";
-        int i = priceText.lastIndexOf(space);
 // со следующего от пробела знака и до конца строки ищем совпадения EUR, USD, руб.
 // вызываем метод convertStringToToDouble() для преобразования строки в вещественное число
 // конвертируем валюту, если есть необходимость
-        switch (priceText.substring(i + 1)) {
+        switch (priceText.substring(priceText.lastIndexOf(" ") + 1)) {
             case "EUR":
                 Logger.info("Цена #" + tradeText + " была указана в EUR. Пересчитана в руб.");
                 return convertStringToToDouble(priceText, "EUR") * eur;

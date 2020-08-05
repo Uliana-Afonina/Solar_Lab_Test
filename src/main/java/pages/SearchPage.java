@@ -34,7 +34,7 @@ public class SearchPage {
     //поле ввода даты Конца извещения
     public SelenideElement dateTo = $("#BaseMainContent_MainContent_txtPublicationDate_txtDateTo");
     //кнопка, перелистывающая таблицу
-    public final String NEXT_PAGE = "#next_t_BaseMainContent_MainContent_jqgTrade_toppager";
+    public final SelenideElement NEXT_PAGE = $x("//*[@id='next_t_BaseMainContent_MainContent_jqgTrade_toppager']");
     //ячейка с таблицы с номером ЕИС
     public final String OOS_NUMBER = ".//*[@aria-describedby='BaseMainContent_MainContent_jqgTrade_OosNumber']";           //"[aria-describedby=\"BaseMainContent_MainContent_jqgTrade_OosNumber\"]";
     //ячейка таблицы со статусом заявки
@@ -42,7 +42,7 @@ public class SearchPage {
     //текстовое поле "Начальная цена"
     public final String PRICE = ".//*[@aria-describedby='BaseMainContent_MainContent_jqgTrade_StartPrice']";
     //всплывающее окно Загрузка
-    public final String LOADER = "#load_BaseMainContent_MainContent_jqgTrade";
+    public final SelenideElement LOADER = $x(".//*[@id='load_BaseMainContent_MainContent_jqgTrade']");
 
     //установка даты начала публикации извещение
     public void setDataBegin(String data) {
@@ -63,9 +63,14 @@ public class SearchPage {
     }
 
     //выбор чек-боксов
-    public void setCheckBox(SelenideElement checkBox) {
-        checkBox.waitUntil(Condition.visible, wait, waitInterval).setSelected(true);
-        Logger.info("Чек-бокс выбран");
+    public void setCheckBox223FL() {
+        checkBox223FL.waitUntil(Condition.visible, wait, waitInterval).setSelected(true);
+        Logger.info("Чек-бокс '223-ФЗ' выбран ");
+    }
+
+    public void setCheckBoxCP() {
+        checkBoxCP.waitUntil(Condition.visible, wait, waitInterval).setSelected(true);
+        Logger.info("Чек-бокс 'Коммерческая закупка' выбран");
     }
 
     //установка начальной цены
@@ -75,14 +80,16 @@ public class SearchPage {
     }
 
     //переключаем на следующую страницу таблицы
-    public void clickNextPage(String NEXT_PAGE) {
-        $(NEXT_PAGE).click();
+    public void clickNextPage() {
+        NEXT_PAGE.click();
     }
 
     //ожидание, пока прогрузится страница таблицы
-    public void waitLoading(String LOADER) {
-        $(LOADER).waitUntil(not(Condition.visible), wait, waitInterval);
+    public void waitLoading() {
+        if (LOADER.isDisplayed()) {
+        LOADER.waitUntil(not(Condition.visible), wait, waitInterval);
         Logger.info("Ожидаю, пока прогрузится таблица");
+        }
     }
 
     //считываем данные о дате публикации извещений и данные о курсах валют

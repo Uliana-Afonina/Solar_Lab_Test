@@ -29,9 +29,9 @@ public class SearchTest extends Util {
         Selenide.open(SearchPage.URL);
         Logger.info("Открыт браузер");
         //чек-бокс 223-ФЗ
-        searchPage.setCheckBox(searchPage.checkBox223FL);
+        searchPage.setCheckBox223FL();
         //чек-бокс Коммерческая закупка
-        searchPage.setCheckBox(searchPage.checkBoxCP);
+        searchPage.setCheckBoxCP();
         //установка начальной цены
         searchPage.setStartPrice(0);
         //начальная дата публикации извещения
@@ -54,7 +54,7 @@ public class SearchTest extends Util {
         searchPage.clickSearchButton();
 
         //ждем, пока прогрузится таблица (должно исчезнуть окно Загрузка...)
-        searchPage.waitLoading(searchPage.LOADER);
+        searchPage.waitLoading();
 
         double sum = 0.0;
         int count = 0;
@@ -62,14 +62,11 @@ public class SearchTest extends Util {
         //до тех пор, пока кнопка перехода на следующую страницу таблицы кликабельная,
         //считаем количество и сумму лотов
         do {
-            if ($(searchPage.LOADER).isDisplayed()) {
-                searchPage.waitLoading(searchPage.LOADER);
-            }
+            searchPage.waitLoading();
             //поиск по коллекции. Выбираем те строки, где присутствует номер ЕИС
             ElementsCollection trades = Selenide.$$x(searchPage.OOS_NUMBER).filterBy(not(Condition.empty));
             for (SelenideElement trade : trades) {
                 if (!trade.parent().$x(searchPage.STATE).text().equals("Отменена")) {
-                    //if (!trade.parent().find(searchPage.STATE).text().equals("Отменена")) {
                     //ищем в строке с номером ЕИС элемент, соответствующий цене лота
                     String txtCur = searchPage.getPrice(trade);
                     //преобразовываем цену из текстового формата в числовой
@@ -82,7 +79,7 @@ public class SearchTest extends Util {
                 }
             }
             //переходим на следующую страницу таблицы
-            searchPage.clickNextPage(searchPage.NEXT_PAGE);
+            searchPage.clickNextPage();
         } while (!$(searchPage.NEXT_PAGE).has(Condition.cssClass("ui-state-disabled")));
         Logger.info("Достигли конца таблицы");
         //переводим общую сумму закупок из экспоненциальной в "читабельную" форму
