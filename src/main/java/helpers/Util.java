@@ -26,11 +26,10 @@ public class Util {
     //в priceText передать String textCurrency = trade.parent().find(searchPage.price).text();
     //В rate передать eur либо usd (выбор делается в методе convertCurrency()
 
-    public static Double convertStringToToDouble(String priceText, String rate) {
+    public static Double convertStringToToDouble(String priceText) {
         return Double.parseDouble(priceText.substring(0, priceText.lastIndexOf(" "))
                 .replace(" ", "")
-                .replace(",", ".")
-                .replace(rate, ""));
+                .replace(",", "."));
     }
 
     //в priceText передать String textCurrency = trade.parent().find(searchPage.price).text();
@@ -44,12 +43,12 @@ public class Util {
         switch (priceText.substring(priceText.lastIndexOf(" ") + 1)) {
             case "EUR":
                 Logger.info("Цена #" + tradeText + " была указана в EUR. Пересчитана в руб.");
-                return convertStringToToDouble(priceText, "EUR") * eur;
+                return convertStringToToDouble(priceText) * eur;
             case "USD":
                 Logger.info("Цена #" + tradeText + " была указана в USD. Пересчитана в руб.");
-                return convertStringToToDouble(priceText, "USD") * usd;
+                return convertStringToToDouble(priceText) * usd;
             case "руб.":
-                return convertStringToToDouble(priceText, "руб.");
+                return convertStringToToDouble(priceText);
         }
 //возвращаем вещественное значение цены лота
         return priceOfLot;
